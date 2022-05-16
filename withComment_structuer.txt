@@ -1,0 +1,83 @@
+
+import org.apache.hadoop.
+
+fs.*
+conf.*
+util.*
+mapReduce.*
+mapReduce.lib.input.*
+mapReduce.lib.output.*
+io.*
+
+public class Wordcount{
+public static void main(String[] args) throws Exception
+	{
+		/*
+		config
+		files to get GenericOptionParser from config and args.getRema Args
+		Path input and output
+		Creation of job to configure wordcount
+		job to set Jar by class 
+		job to set Mapper class
+		job to set Reducer class
+		job to set Output Key class in Text.class
+		job to set Output Value class in InWritable.class
+		FileInputFormat to addInputPath and giving it to j from input
+		FileOutputFormat to setOutputPath and giving it to j from output
+		exit system if Wait for completion is true else remain till completion
+			*/ 
+		Configuration c = new Configuration();
+		String [] files = new GenericOptionsParser(c,args).getRemainingArgs();
+		Path input = new Path(files[0]);
+		Path output = new Path(files[1]);
+		Job j = new Job(c,"wordcount");
+		j.setJarByClass(Wordcount.class);
+		j.setMapperClass(MapForWordCount.class);
+		j.setReducerClass(ReduceForWordCount.class);
+		j.setOutputKeyClass(Text.class);
+		j.setOutputValueClass(IntWritable.class);
+		FileInputFormat.addInputPath(j,input);
+		FileOutputFormat.setOutputPath(j,output);
+		System.exit(j.waitForCompletion(true)?0:1);
+	}
+
+public static class MapForWordCount extends Mapper<LongWritable,Text,Text,InWritable>
+{
+/*
+	key value context
+	key is LongWritable
+	value is Text
+	con is Context
+*/
+	public void map(LongWritable key , Text value ,Context con) throws IOException , InterruptedException
+{
+/*
+	Convert text to string
+	convert string to array of strings by separator
+	iterate through the array of strings
+		ceate Text outputkey by making it uppercase and trim
+		create IntWritable outval and assign it to 1 implicitly
+		map it using context(key,value);		
+*/
+	String lines = value.toString();
+	String[] words = lines.split(",");
+	for(String w : words){
+		Text OutputKey = new Text(w.toUpperCase().trim());
+		IntWritable outputval = new IntWritable(1);
+		con.write(OutputKey,outputval);
+	}
+}
+}
+
+public static class ReduceWordCOunt extends Reducer<Text,InWritable,Text,IntWritable>
+{
+/*
+	word value Context
+	word is Text
+	value is Iterable<IntWritable>
+	con is Context
+*/
+	public void reduce(Text word , Iteratble<IntWritable>value, Context con) throws IOException , InterruptedExcecption
+}
+
+}

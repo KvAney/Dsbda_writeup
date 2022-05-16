@@ -1,0 +1,45 @@
+WORD_COUNT
+import java.io.*
+import org.apache.hadoop.
+	.io.*
+	.util.*
+	.conf.*
+	.mapreduce.*
+	.fs.*
+	.mapreduce.lib.input.*
+	.mapreduce.lib.output.*
+
+Public main{
+configuration
+string array to config args to GenericOptionsParser
+Assign path to input (files[0]) and output (files[1])
+Configuration of new job with 'NAME'
+job to set Jar by class (class_name.class)
+job to set Mapper by class()
+job to set Reducer by class()
+job to set Output Key class(Text.class)
+job to set Output Valueclass(InWritable.class)
+
+FileInputFormat to add Input Path (j, input) 
+FileOutputFormat to set Output Path(j,output);
+
+System exit if WaitforCompletion is true
+}
+
+public static class Mapping extends Mapper<LongWritable, Text , Text ,IntWritable>
+{
+/*
+	extends Mapper <LongWritable , Text , Text , IntWritable>
+	void map takes 3 attributes key(LongWritable) value(Text type) con(Context) throws IOException , InterruptedException
+*/
+	public void map(IntWritable key ,Text value , Context con) throws InterruptException,IOException{}	
+}
+
+publci static class Reducing extends Reducer<Text,LongWritable,Text,IntWritable>
+{
+/*
+	extends Reducer <Text , LongWritable , Text , IntWritable>
+	void reduce takes 3 attributes word(Text) value(Iterable<IntWritable>) con(Context) throws IOException ,InterruptedException
+*/
+	public void reduce(Text word, Iterable<IntWritable>value,Context con)throws InterruptException,IOException{}
+}

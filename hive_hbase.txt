@@ -1,0 +1,92 @@
+hbase:
+In hbase shell::=>
+we use the folder type system in which attribute1,2 can contain more than one sub-attributes
+table creation:
+	create 'table_name' , 'attribute1' ,'attribute2'
+to just view if table is created:
+	list
+to describe table:
+	describe 'table name'
+to put values:
+	put 'table name',row_no , 'attribute1',value1
+to display values:
+	scan 'table name'
+
+
+HIVE::
+wont run without ";"
+	>create [external] table table_name_1(at1 dt1,at2 dt2)
+	>row format delimited fields terminated by "," stored as textfile location
+	>"/home/...";
+
+	load data local inpath '/home/...' into table table_name_1;
+	
+	CREATION OF INDEX::
+		create index index_name
+		on table table_name(for_which_column)
+		AS 'org.apache.hadoop.hive.ql.compact.CompactIndexHandler'
+		with DEFERRED REBUILD;
+
+		show index on table_name;
+
+	JOINING the TABLE:
+		select * from table1 join table0 on id1=id0;
+
+FROM HIVE TO HBASE:::=>>>
+//creation of empty table in hbase	
+		syntax:
+			create 'hbt_1','c1','c2'
+//creation of external table using HBaseStorageHandler and SERDEPROPERTIES and TBLPROPERTIES
+		syntax:
+			create external table ext_table(CC1 dt1,CC2 dt2)
+			stored by "org.apache.hadoop.hive.hbase.HBaseStorageHandler"
+			with SERDEPROPERTIES("hbase.columns.mapping"=":key,c1:dt1_type,c2:dt2_type")
+			TBLPROPERTIES('hbase.table.name'='hbt_1')
+//Creation of one managable_table in hive and loading all the local data in that 
+		syntax:
+			create table managable_table(C1 dt1,C2 dt2)
+			row format delimited fields terminated by ","
+			stored as textfile;
+
+			load data local inpath "/home/cloudera/<name_text_File_from where uwanna load>" into table managable_table;
+//Loading the data from that managable_table to external table	
+		syntax:
+			insert to ext_table select * from managable_table
+
+
+
+
+
+FROM HBASE TO HIVE:::=>>>
+//create the hbase table
+	syntax: create 'tname','ename'
+//load data in it manually
+	syntax:put 'tname',1,'ename','Ron'
+//in Hive create an external table with mapping hbase table attributes and subattributes
+	syntax:
+		create external table ext_hb_to_hi(Name string)
+		stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+		with SERDEPROPERTIES("hbase.columns.mapping"=':key,ename')
+		TBLPROPERTIES("hbase.table.name"='tname');
+//DONE! we can now access the data through the external table
+select * from ext_hb_to_hi;
+
+
+create the hbase table emphive 
+	create 'emphive', 'cf'
+
+Creation of  external tables:
+	>create external table hive_table_temp(id int,name string)
+	>stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+	>with serdeproperties("hbase.columns.mapping"=":key,cf:name")
+	>TBLPROPERTIES("hbase.table.name"="emphive");
+
+
+	load the data in managable table
+		create managable_table(at1 dt1,at2 dt2) row format delimited
+		fields terminated by "," stored as textfile;
+		load data local inpath "/home/de/f.txt" into table managable_table;
+	
+	NOW: put the data from managable_table to hive_table_tamp
+		insert into hive_table_temp select * from managable_table;
+
